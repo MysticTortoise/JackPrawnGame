@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1cf73615c50414db835177a1a483bfa, type: 3}
+  m_Name: JackPrawnFont
+  m_EditorClassIdentifier: Assembly-CSharp::JPBitmapFont
+  charactersStartingAt32:
+  - {fileID: 0}
+  - {fileID: 559155465, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: -1238064633, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: -594667877, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: -1878577493, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 233238844, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 0}
+  - {fileID: 317242993, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 654189664, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 1271300568, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: -358335372, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 773823409, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: -526639530, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 358322170, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: -501162087, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: -1058560329, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: -542121475, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 1717959947, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 1559733308, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: -906246097, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 1455586348, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 1554494423, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 916102099, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 1788700450, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 1063055373, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 1531183683, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: -1545351840, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: -998615675, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 0}
+  - {fileID: -943731198, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 456179095, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: -490584239, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 1596100160, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: -1165437772, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: -576836152, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 1665505674, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 947529518, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 1245523819, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: -1579213412, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 515548377, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: -89217534, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 2013767179, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 1233090604, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 2082936599, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: -2015940157, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 937521563, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 863250678, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 1218558597, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 1530916778, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: -2006719400, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: -2085501885, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: -214268680, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: -557029887, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: 128106496, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  - {fileID: -492599853, guid: 22b44172eb0fe0d48b18f60e61fb3585, type: 3}
+  Spacing: 1.1

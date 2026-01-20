@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JPDebugDraw;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -8,7 +9,7 @@ public enum JPEnemyPuppeteerDirective : uint
 {
     Idle,
     Standby,
-    Approach
+    Approach,
 }
 
 public class JPEnemyPuppeteer
@@ -20,9 +21,13 @@ public class JPEnemyPuppeteer
     private readonly float inRangeDist = 0.25f;
     
     public float approachDist;
+    public bool approachRight;
     
     public float standbyDist;
     private float zStandby;
+
+    public float goAroundDist;
+    private bool underOrOver;
     
     
     private JPEnemyPuppeteerDirective _directive;
@@ -33,9 +38,14 @@ public class JPEnemyPuppeteer
         {
             _directive = value;
 
-            if (directive == JPEnemyPuppeteerDirective.Standby)
+            switch (directive)
             {
-                EnterStandby();
+                case JPEnemyPuppeteerDirective.Standby:
+                    EnterStandby();
+                    break;
+                case JPEnemyPuppeteerDirective.Idle:
+                case JPEnemyPuppeteerDirective.Approach:
+                default: break;
             }
         }
     }
@@ -54,23 +64,50 @@ public class JPEnemyPuppeteer
         float distFromGoal = dir.magnitude;
 
         enemy.moveInput = distFromGoal > inRangeDist ? dir.normalized : Vector2.zero;
+        
+        JPDebugDrawer.AddCommand(new JPLineDrawCommand(enemy.transform.position, new Vector3(targetPos.x, 0, targetPos.y), Color.brown));
 
         return distFromGoal;
     }
 
+    protected float GetDistFromGoal(Vector2 targetPos)
+    {
+        return (new Vector2(targetPos.x - enemy.transform.position.x,
+            targetPos.y - enemy.transform.position.z)).magnitude;
+    }
+
     protected virtual void DirectApproach()
     {
-        var goal = new Vector2(
-            target.transform.position.x +
-            (approachDist * Mathf.Sign(enemy.transform.position.x - target.transform.position.x)),
-            target.transform.position.z
-        );
         if (!enemy.CombatCapable())
         {
             directive = JPEnemyPuppeteerDirective.Standby;
             return;
         }
-        float dist = GoToGoal(goal);
+        
+        var approachGoal = new Vector2(
+            target.transform.position.x +
+            approachDist * (approachRight ? 1 : -1),
+            target.transform.position.z
+        );
+        
+        var aroundGoal = new Vector2(
+            target.transform.position.x,
+            target.transform.position.z + (goAroundDist * (underOrOver ? 1 : -1))
+        );
+        
+        // ReSharper disable once CompareOfFloatsByEqualityOperator
+        bool shouldGoAround = Mathf.Sign(approachGoal.x - target.transform.position.x) != Mathf.Sign(enemy.transform.position.x - target.transform.position.x);
+
+        float distFromAround = GetDistFromGoal(approachGoal);
+
+        shouldGoAround &= distFromAround > approachDist * 2f;
+        if (shouldGoAround)
+        {
+            GoToGoal(aroundGoal);
+            return;
+        }
+
+        float dist = GoToGoal(approachGoal);
         if (dist > inRangeDist) return;
         
         enemy.SetFacingDir(target.transform.position);
@@ -150,9 +187,11 @@ public class JPEnemyDirector : MonoBehaviour
     protected HashSet<JPEnemyPuppeteer> puppeteers = new();
 
     [SerializeField] protected uint ToSendIn;
+    [SerializeField] protected uint ToFlank;
     [SerializeField] protected float SeeRange;
     [SerializeField] protected float ApproachDist;
     [SerializeField] protected float StandbyDist;
+    [SerializeField] protected float GoAroundDist;
 
     private JPCharacter player;
 
@@ -173,7 +212,8 @@ public class JPEnemyDirector : MonoBehaviour
             {
                 approachDist = ApproachDist,
                 seeRange = SeeRange,
-                standbyDist = StandbyDist
+                standbyDist = StandbyDist,
+                goAroundDist = GoAroundDist
             };
             puppeteers.Add(puppeteer);
             
@@ -186,12 +226,71 @@ public class JPEnemyDirector : MonoBehaviour
         int a = puppeteers.RemoveWhere(puppeteer => !puppeteer.enemy);
         
         CheckForNewPuppets();
+
+        var approachers = puppeteers.Where(p => p.directive == JPEnemyPuppeteerDirective.Approach).ToArray();
+        int righties = approachers.Count(p => p.approachRight);
+        int lefties = approachers.Count(p => !p.approachRight);
+
+        if (righties >= lefties)
+        {
+            // righties is confronter
+            if (righties < ToSendIn)
+            {
+                foreach (JPEnemyPuppeteer puppeteer in puppeteers.Where(p => p.directive == JPEnemyPuppeteerDirective.Standby))
+                {
+                    puppeteer.directive = JPEnemyPuppeteerDirective.Approach;
+                    puppeteer.approachRight = true;
+                    righties++;
+                    if (righties >= ToSendIn)
+                        break;
+                }
+            }
+
+            if (lefties < ToFlank)
+            {
+                foreach (JPEnemyPuppeteer puppeteer in puppeteers.Where(p => p.directive == JPEnemyPuppeteerDirective.Standby))
+                {
+                    puppeteer.directive = JPEnemyPuppeteerDirective.Approach;
+                    puppeteer.approachRight = false;
+                    lefties++;
+                    if (lefties >= ToSendIn)
+                        break;
+                }
+            }
+        }
+        else
+        {
+            // lefties is confronter
+            if (lefties < ToSendIn)
+            {
+                foreach (JPEnemyPuppeteer puppeteer in puppeteers.Where(p => p.directive == JPEnemyPuppeteerDirective.Standby))
+                {
+                    puppeteer.directive = JPEnemyPuppeteerDirective.Approach;
+                    puppeteer.approachRight = true;
+                    lefties++;
+                    if (lefties >= ToSendIn)
+                        break;
+                }
+            }
+
+            if (righties < ToFlank)
+            {
+                foreach (JPEnemyPuppeteer puppeteer in puppeteers.Where(p => p.directive == JPEnemyPuppeteerDirective.Standby))
+                {
+                    puppeteer.directive = JPEnemyPuppeteerDirective.Approach;
+                    puppeteer.approachRight = false;
+                    righties++;
+                    if (righties >= ToSendIn)
+                        break;
+                }
+            }
+        }
         
         // Assign at least 2 guys to go after player
-        int chaserCount = puppeteers.Count(p => p.directive == JPEnemyPuppeteerDirective.Approach);
+        /*int chaserCount = puppeteers.Count(p => p.directive == JPEnemyPuppeteerDirective.Approach);
         if (chaserCount < ToSendIn)
         {
-            var notChasing = puppeteers.Where(p => p.directive != JPEnemyPuppeteerDirective.Approach && p.enemy.Actionable());
+            var notChasing = puppeteers.Where(p => p.directive == JPEnemyPuppeteerDirective.Standby && p.enemy.Actionable());
             foreach (JPEnemyPuppeteer puppeteer in notChasing)
             {
                 if (chaserCount >= ToSendIn)
@@ -201,6 +300,24 @@ public class JPEnemyDirector : MonoBehaviour
                 chaserCount++;
             }
         }
+        
+        // Assign guys to flank
+        int flankerCount = puppeteers.Count(p => p.directive == JPEnemyPuppeteerDirective.Flank);
+        if (flankerCount < ToFlank)
+        {
+            var notFlanking =
+                puppeteers.Where(p => 
+                    p.directive == JPEnemyPuppeteerDirective.Standby && 
+                    p.enemy.Actionable());
+            foreach (JPEnemyPuppeteer puppeteer in notFlanking)
+            {
+                if (flankerCount >= ToFlank)
+                    break;
+
+                puppeteer.directive = JPEnemyPuppeteerDirective.Flank;
+                flankerCount++;
+            }
+        }*/
 
         foreach (JPEnemyPuppeteer puppeteer in puppeteers)
         {

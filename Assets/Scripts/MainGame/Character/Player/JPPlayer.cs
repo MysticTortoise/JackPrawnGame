@@ -89,6 +89,7 @@ public class JPPlayer : JPCharacter
 
     public void DoJabHitbox()
     {
+        if (jabCount <= 0) return;
         foreach (JPProjectedCollider hurtbox in jabHitbox.CheckCollision(JPCollisionType.Hurtbox))
         {
             if(hurtbox is JPHurtableBox hurtableBox)

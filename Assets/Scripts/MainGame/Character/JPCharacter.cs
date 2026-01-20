@@ -11,7 +11,7 @@ public class JPCharacter : MonoBehaviour
     private static readonly int MovingAnimID = Animator.StringToHash("Moving");
     private static readonly int GroundedAnimID = Animator.StringToHash("Grounded");
     private static readonly int HurtID = Animator.StringToHash("Hurt");
-    private static readonly int DeadAnimID = Animator.StringToHash("Die");
+    private static readonly int DeadAnimID = Animator.StringToHash("Dead");
     private static readonly int DamageStateID = Animator.StringToHash("DamageState");
 
     public static HashSet<JPCharacter> Characters = new();
@@ -164,6 +164,7 @@ public class JPCharacter : MonoBehaviour
         animator.SetBool(GroundedAnimID, grounded);
         animator.SetBool(HurtID, damageState != JPCharacterDamageState.None);
         animator.SetInteger(DamageStateID,(int)damageState);
+        animator.SetBool(DeadAnimID, dead);
     }
     
 
@@ -254,11 +255,11 @@ public class JPCharacter : MonoBehaviour
         switch (attack.DamageSeverity)
         {
             case JPCharacterDamageState.Flinch:
-                flinchMove = Vector3.right * sign * FlinchForce * attack.EffectStrength;
+                flinchMove = Vector3.right * (sign * FlinchForce * attack.EffectStrength);
                 flinchTimer = FlinchTime;
                 break;
             case JPCharacterDamageState.Flying:
-                flinchMove = Vector3.right * sign * FlyingForce * (attack.EffectStrength / 30);
+                flinchMove = Vector3.right * (sign * FlyingForce * (attack.EffectStrength / 30));
                 yVel = attack.EffectStrength;
                 flinchTimer = 999;
                 break;
@@ -279,7 +280,6 @@ public class JPCharacter : MonoBehaviour
     {
         dead = true;
         yVel += DeathForce;
-        animator.SetTrigger(DeadAnimID);
     }
     
 
