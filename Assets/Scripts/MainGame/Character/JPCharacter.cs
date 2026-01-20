@@ -12,6 +12,7 @@ public class JPCharacter : MonoBehaviour
     private static readonly int GroundedAnimID = Animator.StringToHash("Grounded");
     private static readonly int HurtID = Animator.StringToHash("Hurt");
     private static readonly int DeadAnimID = Animator.StringToHash("Die");
+    private static readonly int DamageStateID = Animator.StringToHash("DamageState");
 
     public static HashSet<JPCharacter> Characters = new();
 
@@ -162,6 +163,7 @@ public class JPCharacter : MonoBehaviour
         
         animator.SetBool(GroundedAnimID, grounded);
         animator.SetBool(HurtID, damageState != JPCharacterDamageState.None);
+        animator.SetInteger(DamageStateID,(int)damageState);
     }
     
 

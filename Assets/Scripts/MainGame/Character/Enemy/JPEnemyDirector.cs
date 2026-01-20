@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JPDebugDraw;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -15,14 +14,31 @@ public enum JPEnemyPuppeteerDirective : uint
 public class JPEnemyPuppeteer
 {
     public JPCharacter enemy;
-    public JPEnemyPuppeteerDirective directive;
-    protected Vector2 goalPos;
     public JPCharacter target;
     public float seeRange;
 
     private readonly float inRangeDist = 0.25f;
     
     public float approachDist;
+    
+    public float standbyDist;
+    private float zStandby;
+    
+    
+    private JPEnemyPuppeteerDirective _directive;
+    public JPEnemyPuppeteerDirective directive
+    {
+        get => _directive;
+        set
+        {
+            _directive = value;
+
+            if (directive == JPEnemyPuppeteerDirective.Standby)
+            {
+                EnterStandby();
+            }
+        }
+    }
 
     public JPEnemyPuppeteer(JPCharacter enemy, JPCharacter target)
     {
@@ -61,9 +77,24 @@ public class JPEnemyPuppeteer
         enemy.BeginAttack();
     }
 
+    protected virtual void EnterStandby()
+    {
+        zStandby = Random.Range(
+            JPPlayfieldZSide.bottomSide.projectedCollider.rect.GetMax().z,
+            JPPlayfieldZSide.topSide.projectedCollider.rect.GetMax().z);
+    }
+
     protected virtual void DirectStandby()
     {
-        enemy.moveInput = Vector2.zero;
+        var goal = new Vector2(
+            target.transform.position.x +
+            (standbyDist * Mathf.Sign(enemy.transform.position.x - target.transform.position.x)),
+            zStandby
+        );
+        float dist = GoToGoal(goal);
+        if (dist > inRangeDist) return;
+        
+        enemy.SetFacingDir(target.transform.position);
     }
 
     protected virtual void FindNewTargets()
@@ -73,6 +104,7 @@ public class JPEnemyPuppeteer
                      .Where(character => (character.transform.position - enemy.transform.position).magnitude < seeRange))
         {
             target = character;
+            directive = JPEnemyPuppeteerDirective.Standby;
             return;
         }
     }
@@ -87,10 +119,10 @@ public class JPEnemyPuppeteer
     public void Direct()
     {
         // Determine target
-        if (target is not null && (enemy.transform.position - target.transform.position).magnitude > seeRange)
+        /*if (target is not null && (enemy.transform.position - target.transform.position).magnitude > seeRange)
         {
             target = null;
-        }
+        }*/
 
         if (target is null)
             directive = JPEnemyPuppeteerDirective.Idle;
@@ -120,6 +152,7 @@ public class JPEnemyDirector : MonoBehaviour
     [SerializeField] protected uint ToSendIn;
     [SerializeField] protected float SeeRange;
     [SerializeField] protected float ApproachDist;
+    [SerializeField] protected float StandbyDist;
 
     private JPCharacter player;
 
@@ -139,7 +172,8 @@ public class JPEnemyDirector : MonoBehaviour
             var puppeteer = new JPEnemyPuppeteer(enemy, player)
             {
                 approachDist = ApproachDist,
-                seeRange = SeeRange
+                seeRange = SeeRange,
+                standbyDist = StandbyDist
             };
             puppeteers.Add(puppeteer);
             

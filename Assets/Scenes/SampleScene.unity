@@ -618,6 +618,7 @@ GameObject:
   m_Component:
   - component: {fileID: 447257354}
   - component: {fileID: 447257355}
+  - component: {fileID: 447257356}
   m_Layer: 0
   m_Name: BackWall
   m_TagString: Untagged
@@ -655,6 +656,19 @@ MonoBehaviour:
   Offset: {x: 0, y: 0, z: -2.5}
   Extents: {x: 999, y: 99, z: 1}
   CollisionType: 1
+--- !u!114 &447257356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 447257353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36779c76f1f144929df58cfa44b16c5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::JPPlayfieldZSide
+  isTop: 1
 --- !u!1 &505930941
 GameObject:
   m_ObjectHideFlags: 0
@@ -967,6 +981,7 @@ GameObject:
   m_Component:
   - component: {fileID: 944342123}
   - component: {fileID: 944342124}
+  - component: {fileID: 944342125}
   m_Layer: 0
   m_Name: 4thWall
   m_TagString: Untagged
@@ -1004,6 +1019,19 @@ MonoBehaviour:
   Offset: {x: 0, y: 0, z: 0}
   Extents: {x: 999, y: 99, z: 1}
   CollisionType: 1
+--- !u!114 &944342125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 944342122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36779c76f1f144929df58cfa44b16c5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::JPPlayfieldZSide
+  isTop: 0
 --- !u!21 &966383548
 Material:
   serializedVersion: 8
@@ -2224,6 +2252,7 @@ MonoBehaviour:
   ToSendIn: 2
   SeeRange: 12
   ApproachDist: 1.6
+  StandbyDist: 8
 --- !u!4 &1895304347
 Transform:
   m_ObjectHideFlags: 0
@@ -2791,13 +2820,14 @@ MonoBehaviour:
   BounceDetract: 0
   FlinchMoveRecoverSpeed: 0.1
   DeathForce: 20
+  Faction: 0
   Health: 306
   UppercutForce: 40
   UppercutForwardDir: 6
   JabAttacks:
   - Damage: 1
     DamageSeverity: 1
-    EffectStrength: 1
+    EffectStrength: 0.4
   - Damage: 2
     DamageSeverity: 2
     EffectStrength: 5

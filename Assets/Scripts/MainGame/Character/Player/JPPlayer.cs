@@ -98,9 +98,9 @@ public class JPPlayer : JPCharacter
 
     public void CheckQueuedJab(bool freeMovement = true)
     {
-        if (queuedJab && jabCount < 3)
+        if (queuedJab && jabCount < 3 && CanAttack())
             Jab();
-        else if(freeMovement)
+        else if(freeMovement || !CanAttack())
         {
             attackState = JPPlayerAttackState.Idle;
             jabCount = 0;
@@ -150,6 +150,7 @@ public class JPPlayer : JPCharacter
     {
         if (!base.HitBy(source, attack)) return false;
         attackState = JPPlayerAttackState.Idle;
+        jabCount = 0;
         return true;
     }
 
