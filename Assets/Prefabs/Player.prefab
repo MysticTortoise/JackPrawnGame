@@ -227,12 +227,13 @@ Transform:
   m_GameObject: {fileID: 1008785421491054800}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.02038622, y: -8.28, z: 16.56}
+  m_LocalPosition: {x: -10.682381, y: -8.28, z: 16.56}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 533534660026119654}
   - {fileID: 8889788217962924112}
+  - {fileID: 2913394794592332270}
   m_Father: {fileID: 348163616661521004}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &245185702621838348
@@ -282,6 +283,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddb224c587aad224c8a6f3b8e5f61896, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JPPlayerAnimatorMessenger
+--- !u!1 &1520230914614158105
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2913394794592332270}
+  m_Layer: 0
+  m_Name: FXSource
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2913394794592332270
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1520230914614158105}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.08, y: 3.88, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2662225511703222747}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2066528291100579446
 GameObject:
   m_ObjectHideFlags: 0
@@ -355,23 +387,28 @@ MonoBehaviour:
   FlinchMoveRecoverSpeed: 0.2
   DeathForce: 20
   Faction: 0
-  Health: 306
+  MaxHealth: 20
+  CurrentHealth: 0
   UppercutForce: 40
   UppercutForwardDir: 6
   JabAttacks:
   - Damage: 1
     DamageSeverity: 1
     EffectStrength: 0.4
+    AttackEffect: {fileID: 1266180631865872503, guid: 209df5de56d161a4eb2d9bc1efc37abc, type: 3}
   - Damage: 2
     DamageSeverity: 2
-    EffectStrength: 5
+    EffectStrength: 2
+    AttackEffect: {fileID: 8256192449762074763, guid: aee0a9763962f6b4fae5b54039b17fc1, type: 3}
   - Damage: 5
     DamageSeverity: 3
     EffectStrength: 40
+    AttackEffect: {fileID: 8256192449762074763, guid: f7756c03bf7affe41afaab4012dfd5dd, type: 3}
   UppercutAttack:
     Damage: 3
     DamageSeverity: 3
     EffectStrength: 50
+    AttackEffect: {fileID: 5326211154736615938, guid: a4951e7392736684d91ba5aac6dc6469, type: 3}
 --- !u!114 &7608977312290902217
 MonoBehaviour:
   m_ObjectHideFlags: 0

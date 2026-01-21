@@ -60,5 +60,25 @@ public class JPFollowCamera : MonoBehaviour
             SafeZone * 2, 
             GetComponent<Camera>().orthographicSize * 2, 
             0));
+        
+        Gizmos.color = Color.red;
+        managedCamera = GetComponent<Camera>();
+        Gizmos.DrawWireCube(GetBounds().center, GetBounds().size);
+    }
+
+    public void SetTarget(JPCharacter character)
+    {
+        Target = character.transform.Find("Visuals");
+    }
+
+    public Rect GetBounds()
+    {
+        var rect = new Rect(
+            Vector2.zero,
+            new Vector2(
+                managedCamera.orthographicSize * 2 * managedCamera.aspect,
+                managedCamera.orthographicSize * 2));
+        rect.center = new Vector2(transform.position.x, transform.position.y);
+        return rect;
     }
 }

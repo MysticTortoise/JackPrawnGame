@@ -98,7 +98,7 @@ public class JPEnemyPuppeteer
         // ReSharper disable once CompareOfFloatsByEqualityOperator
         bool shouldGoAround = Mathf.Sign(approachGoal.x - target.transform.position.x) != Mathf.Sign(enemy.transform.position.x - target.transform.position.x);
 
-        float distFromAround = GetDistFromGoal(approachGoal);
+        float distFromAround = GetDistFromGoal(aroundGoal);
 
         shouldGoAround &= distFromAround > approachDist * 2f;
         if (shouldGoAround)
@@ -203,8 +203,8 @@ public class JPEnemyDirector : MonoBehaviour
 
     private void CheckForNewPuppets()
     {
-        var puppeteering = puppeteers.Select(p => p.enemy).ToHashSet();
-        managing.RemoveWhere(c => !c);
+        var puppeteering = puppeteers .Select(p => p.enemy).ToHashSet();
+        managing.RemoveWhere(c => !c || c.dead);
 
         foreach (JPCharacter enemy in managing.Where(enemy => !puppeteering.Contains(enemy)))
         {
@@ -223,7 +223,7 @@ public class JPEnemyDirector : MonoBehaviour
     private void Update()
     {
         // Clear Dead Puppets
-        int a = puppeteers.RemoveWhere(puppeteer => !puppeteer.enemy);
+        int a = puppeteers.RemoveWhere(puppeteer => !puppeteer.enemy || puppeteer.enemy.dead);
         
         CheckForNewPuppets();
 
@@ -231,12 +231,12 @@ public class JPEnemyDirector : MonoBehaviour
         int righties = approachers.Count(p => p.approachRight);
         int lefties = approachers.Count(p => !p.approachRight);
 
-        if (righties >= lefties)
+        if (righties > lefties)
         {
             // righties is confronter
             if (righties < ToSendIn)
             {
-                foreach (JPEnemyPuppeteer puppeteer in puppeteers.Where(p => p.directive == JPEnemyPuppeteerDirective.Standby))
+                foreach (JPEnemyPuppeteer puppeteer in puppeteers.Where(p => p.directive == JPEnemyPuppeteerDirective.Standby && p.enemy.CombatCapable()).OrderBy(p => -p.enemy.transform.position.x))
                 {
                     puppeteer.directive = JPEnemyPuppeteerDirective.Approach;
                     puppeteer.approachRight = true;
@@ -245,15 +245,34 @@ public class JPEnemyDirector : MonoBehaviour
                         break;
                 }
             }
+            else if(righties > ToSendIn)
+            {
+                foreach (JPEnemyPuppeteer puppeteer in approachers.Where(p => p.approachRight))
+                {
+                    puppeteer.directive = JPEnemyPuppeteerDirective.Standby;
+                    righties--;
+                    if (righties <= ToSendIn)
+                        break;
+                }
+            }
 
             if (lefties < ToFlank)
             {
-                foreach (JPEnemyPuppeteer puppeteer in puppeteers.Where(p => p.directive == JPEnemyPuppeteerDirective.Standby))
+                foreach (JPEnemyPuppeteer puppeteer in puppeteers.Where(p => p.directive == JPEnemyPuppeteerDirective.Standby && p.enemy.CombatCapable()).OrderBy(p => p.enemy.transform.position.x))
                 {
                     puppeteer.directive = JPEnemyPuppeteerDirective.Approach;
                     puppeteer.approachRight = false;
                     lefties++;
-                    if (lefties >= ToSendIn)
+                    if (lefties >= ToFlank)
+                        break;
+                }
+            } if(lefties > ToFlank)
+            {
+                foreach (JPEnemyPuppeteer puppeteer in approachers.Where(p => !p.approachRight))
+                {
+                    puppeteer.directive = JPEnemyPuppeteerDirective.Standby;
+                    lefties--;
+                    if (lefties <= ToFlank)
                         break;
                 }
             }
@@ -263,7 +282,7 @@ public class JPEnemyDirector : MonoBehaviour
             // lefties is confronter
             if (lefties < ToSendIn)
             {
-                foreach (JPEnemyPuppeteer puppeteer in puppeteers.Where(p => p.directive == JPEnemyPuppeteerDirective.Standby))
+                foreach (JPEnemyPuppeteer puppeteer in puppeteers.Where(p => p.directive == JPEnemyPuppeteerDirective.Standby && p.enemy.CombatCapable()).OrderBy(p => p.enemy.transform.position.x))
                 {
                     puppeteer.directive = JPEnemyPuppeteerDirective.Approach;
                     puppeteer.approachRight = true;
@@ -271,57 +290,50 @@ public class JPEnemyDirector : MonoBehaviour
                     if (lefties >= ToSendIn)
                         break;
                 }
+            } if(lefties > ToSendIn)
+            {
+                foreach (JPEnemyPuppeteer puppeteer in approachers.Where(p => !p.approachRight))
+                {
+                    puppeteer.directive = JPEnemyPuppeteerDirective.Standby;
+                    lefties--;
+                    if (lefties <= ToSendIn)
+                        break;
+                }
             }
 
             if (righties < ToFlank)
             {
-                foreach (JPEnemyPuppeteer puppeteer in puppeteers.Where(p => p.directive == JPEnemyPuppeteerDirective.Standby))
+                foreach (JPEnemyPuppeteer puppeteer in puppeteers.Where(p => p.directive == JPEnemyPuppeteerDirective.Standby && p.enemy.CombatCapable()).OrderBy(p => -p.enemy.transform.position.x))
                 {
                     puppeteer.directive = JPEnemyPuppeteerDirective.Approach;
                     puppeteer.approachRight = false;
                     righties++;
-                    if (righties >= ToSendIn)
+                    if (righties >= ToFlank)
+                        break;
+                }
+            }
+            else if (righties > ToFlank)
+            {
+                foreach (JPEnemyPuppeteer puppeteer in approachers.Where(p => p.approachRight))
+                {
+                    puppeteer.directive = JPEnemyPuppeteerDirective.Standby;
+                    righties--;
+                    if (righties <= ToFlank)
                         break;
                 }
             }
         }
+
+        puppeteers.RemoveWhere(p => !p.enemy);
         
-        // Assign at least 2 guys to go after player
-        /*int chaserCount = puppeteers.Count(p => p.directive == JPEnemyPuppeteerDirective.Approach);
-        if (chaserCount < ToSendIn)
-        {
-            var notChasing = puppeteers.Where(p => p.directive == JPEnemyPuppeteerDirective.Standby && p.enemy.Actionable());
-            foreach (JPEnemyPuppeteer puppeteer in notChasing)
-            {
-                if (chaserCount >= ToSendIn)
-                    break;
-
-                puppeteer.directive = JPEnemyPuppeteerDirective.Approach;
-                chaserCount++;
-            }
-        }
-        
-        // Assign guys to flank
-        int flankerCount = puppeteers.Count(p => p.directive == JPEnemyPuppeteerDirective.Flank);
-        if (flankerCount < ToFlank)
-        {
-            var notFlanking =
-                puppeteers.Where(p => 
-                    p.directive == JPEnemyPuppeteerDirective.Standby && 
-                    p.enemy.Actionable());
-            foreach (JPEnemyPuppeteer puppeteer in notFlanking)
-            {
-                if (flankerCount >= ToFlank)
-                    break;
-
-                puppeteer.directive = JPEnemyPuppeteerDirective.Flank;
-                flankerCount++;
-            }
-        }*/
-
         foreach (JPEnemyPuppeteer puppeteer in puppeteers)
         {
             puppeteer.Direct();
         }
+    }
+
+    public void AddManagedEnemy(JPCharacter character)
+    {
+        managing.Add(character);
     }
 }

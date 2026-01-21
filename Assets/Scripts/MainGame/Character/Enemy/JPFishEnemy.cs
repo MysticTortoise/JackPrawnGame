@@ -38,6 +38,8 @@ public class JPFishEnemy : JPEnemyBase
 
     public void DoAttackHitbox()
     {
+        if (jabCount <= 0)
+            return;
         foreach (JPProjectedCollider hurtbox in jabHitbox.CheckCollision(JPCollisionType.Hurtbox))
         {
             if(hurtbox is JPHurtableBox hurtableBox)
@@ -54,6 +56,12 @@ public class JPFishEnemy : JPEnemyBase
             Jab();
         else
             attackQueued = true;
+    }
+
+    public override void CounterAttack()
+    {
+        jabCount = 1;
+        Jab();
     }
 
     public void FinishAttack()

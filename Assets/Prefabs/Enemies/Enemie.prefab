@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1461068841350215618
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6214018796827540205}
+  m_Layer: 0
+  m_Name: FXSource
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6214018796827540205
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1461068841350215618}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.6759813, y: 3.815, z: -4.13}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9220217062787794577}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2602340237201178797
 GameObject:
   m_ObjectHideFlags: 0
@@ -170,7 +201,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5dfe3ba60c8468ea9a5143473c920cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JPFishEnemy
-  MoveSpeed: {x: 4, y: 5}
+  MoveSpeed: {x: 5, y: 6}
   GravityForce: 100
   FlinchForce: 7
   FlinchTime: 0.4
@@ -179,14 +210,17 @@ MonoBehaviour:
   FlinchMoveRecoverSpeed: 0.1
   DeathForce: 20
   Faction: 0
-  Health: 10
+  MaxHealth: 10
+  CurrentHealth: 0
   JabAttacks:
   - Damage: 1
     DamageSeverity: 1
     EffectStrength: 0.2
+    AttackEffect: {fileID: 0}
   - Damage: 2
     DamageSeverity: 1
     EffectStrength: 1
+    AttackEffect: {fileID: 0}
 --- !u!1 &3857892849618416271
 GameObject:
   m_ObjectHideFlags: 0
@@ -459,12 +493,13 @@ Transform:
   m_GameObject: {fileID: 5454386633319501095}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.4552703, y: -3.275, z: 6.55}
+  m_LocalPosition: {x: 0.024018764, y: -2.065, z: 4.13}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7200430696300003165}
   - {fileID: 9181190247946228308}
+  - {fileID: 6214018796827540205}
   m_Father: {fileID: 6514212581081870486}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &8932576367239590336

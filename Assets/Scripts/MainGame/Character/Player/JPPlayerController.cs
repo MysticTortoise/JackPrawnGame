@@ -8,7 +8,7 @@ public class JPPlayerController : MonoBehaviour
 {
     [CanBeNull] private JPCharacter player;
 
-    private void Start()
+    private void GetPlayerObj()
     {
         if (player != null) return;
         foreach (Transform child in transform)
@@ -17,6 +17,11 @@ public class JPPlayerController : MonoBehaviour
             player = child.GetComponent<JPCharacter>();
             break;
         }
+    }
+
+    private void Start()
+    {
+        GetPlayerObj();
     }
     
     public void OnMove(InputAction.CallbackContext context)
@@ -36,5 +41,11 @@ public class JPPlayerController : MonoBehaviour
         {
             player.ReleaseAttack();
         }
+    }
+
+    public JPCharacter GetPlayer()
+    {
+        GetPlayerObj();
+        return player;
     }
 }

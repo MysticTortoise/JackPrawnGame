@@ -33,12 +33,14 @@ public class JPCharacter : MonoBehaviour
     // Components
     private JPProjectedCollider footCollider;
     protected Transform visualHandler;
+    protected Transform fxSource;
     protected Animator animator;
     
     // State
     [NonSerialized] public Vector2 moveInput;
     protected JPCharacterDamageState damageState = JPCharacterDamageState.None;
-    public int Health;
+    [FormerlySerializedAs("Health")] public int MaxHealth;
+    [DoNotSerialize] public int CurrentHealth;
     
     [NonSerialized] public Vector3 flinchMove = Vector3.zero;
     protected float flinchTimer;
@@ -47,13 +49,19 @@ public class JPCharacter : MonoBehaviour
     protected bool grounded;
 
     protected bool facingDir;
-    protected bool dead;
+
+    public bool dead
+    {
+        get;
+        protected set;
+    }
 
     private void SetupComponents()
     {
         footCollider = GetComponents<JPProjectedCollider>()
             .First(col => (col.CollisionType & JPCollisionType.Hurtbox) == 0);
         visualHandler = transform.Find("Visuals");
+        fxSource = visualHandler.Find("FXSource");
         animator = visualHandler.GetComponent<Animator>();
     }
 
@@ -98,6 +106,7 @@ public class JPCharacter : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected void Start()
     {
+        CurrentHealth = MaxHealth;
         SetupComponents();
     }
 
@@ -217,6 +226,11 @@ public class JPCharacter : MonoBehaviour
         
     }
 
+    public virtual void CounterAttack()
+    {
+        BeginAttack();
+    }
+
     protected virtual bool CanBeHit()
     {
         return damageState != JPCharacterDamageState.Flying && !dead;
@@ -230,11 +244,17 @@ public class JPCharacter : MonoBehaviour
         if (!CanBeHit())
             return false;
         
-        Health -= attack.Damage;
-        if(Health <= 0)
+        CurrentHealth -= attack.Damage;
+        if(CurrentHealth <= 0)
             Die();
 
         SetFacingDir(transform.position.x - source.transform.position.x < 0);
+
+        if (attack.AttackEffect)
+        {
+            GameObject fxObj = Instantiate(attack.AttackEffect);
+            fxObj.transform.position = fxSource.position;
+        }
         
         if (attack.DamageSeverity < damageState)
             return true;
@@ -244,7 +264,7 @@ public class JPCharacter : MonoBehaviour
             damageState = JPCharacterDamageState.None;
             flinchTimer = 0;
             flinchMove = Vector3.zero;
-            BeginAttack();
+            CounterAttack();
             return false;
         }
         

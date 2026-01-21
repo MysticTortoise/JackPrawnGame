@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -73,7 +74,26 @@ public class JPFontDrawer : MonoBehaviour
 
     private void Start()
     {
+        if (StartingCharactersPerLine == -1)
+            StartingCharactersPerLine = int.MaxValue;
         charactersPerLine = StartingCharactersPerLine;
         SetMessage(StartingMessage);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.wheat;
+
+        int charsPerLine = StartingCharactersPerLine > 0 ? StartingCharactersPerLine : int.MaxValue;
+        
+        Gizmos.DrawRay(transform.position, new Vector3(
+            Mathf.Min(charsPerLine, StartingMessage.Length) * Font.Spacing,
+            0, 0
+            ));
+        Gizmos.DrawRay(transform.position, new Vector3(
+            0,
+            // ReSharper disable once PossibleLossOfFraction
+            (StartingMessage.Length / charsPerLine) * -Font.Spacing, 0
+        ));
     }
 }
