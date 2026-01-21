@@ -30,6 +30,7 @@ public class JPEnemyPuppeteer
     private bool underOrOver;
     
     
+    // ReSharper disable once InconsistentNaming
     private JPEnemyPuppeteerDirective _directive;
     public JPEnemyPuppeteerDirective directive
     {
@@ -223,13 +224,27 @@ public class JPEnemyDirector : MonoBehaviour
     private void Update()
     {
         // Clear Dead Puppets
-        int a = puppeteers.RemoveWhere(puppeteer => !puppeteer.enemy || puppeteer.enemy.dead);
+        puppeteers.RemoveWhere(puppeteer => !puppeteer.enemy || puppeteer.enemy.dead);
         
         CheckForNewPuppets();
 
         var approachers = puppeteers.Where(p => p.directive == JPEnemyPuppeteerDirective.Approach).ToArray();
         int righties = approachers.Count(p => p.approachRight);
         int lefties = approachers.Count(p => !p.approachRight);
+
+        
+        // shit hack 
+        var capableEnemies =
+            puppeteers.Where(p => p.directive == JPEnemyPuppeteerDirective.Standby && p.enemy.CombatCapable());
+
+        var jpEnemyPuppeteers = capableEnemies as JPEnemyPuppeteer[] ?? capableEnemies.ToArray();
+        if (righties == 0 && lefties == 0 && jpEnemyPuppeteers.Any())
+        {
+            JPEnemyPuppeteer goGetEm = jpEnemyPuppeteers.First();
+            goGetEm.directive = JPEnemyPuppeteerDirective.Approach;
+            goGetEm.approachRight = goGetEm.enemy.transform.position.x > goGetEm.target.transform.position.x;
+            return;
+        }
 
         if (righties > lefties)
         {

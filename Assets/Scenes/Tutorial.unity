@@ -1405,7 +1405,7 @@ PrefabInstance:
       objectReference: {fileID: 2018732272}
     - target: {fileID: 2237665936164199124, guid: 92197563d35f8ff498785c15e9907f30, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.0016517639
       objectReference: {fileID: 0}
     - target: {fileID: 5331240134558954460, guid: 92197563d35f8ff498785c15e9907f30, type: 3}
       propertyPath: Textures.Array.size
@@ -1469,7 +1469,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5903395092811778347, guid: 92197563d35f8ff498785c15e9907f30, type: 3}
       propertyPath: zSlope
-      value: 0
+      value: 0.001
       objectReference: {fileID: 0}
     - target: {fileID: 5903395092811778347, guid: 92197563d35f8ff498785c15e9907f30, type: 3}
       propertyPath: zBottom
