@@ -15,8 +15,8 @@ public class JPCharacterHurtbox : JPHurtableBox
     }
     
     
-    public override void Hit(JPCharacter source, JPCharacterAttack attack)
+    public override bool Hit(JPCharacter source, JPCharacterAttack attack)
     {
-        character.HitBy(source, attack);
+        return character.HitBy(source, attack);
     }
 }

@@ -28,4 +28,14 @@ public class JPPlayerAnimatorMessenger : MonoBehaviour
     {
         player.UppercutLiftoff();
     }
+    
+    public void ChargeAttack()
+    {
+        player.ChargeAttack();
+    }
+    
+    public void FinishChargeAttack()
+    {
+        player.FinishChargeAttack();
+    }
 }

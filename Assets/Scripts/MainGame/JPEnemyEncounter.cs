@@ -1,15 +1,22 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 [Serializable]
 class JPEnemyPoolEntry
 {
-    public GameObject type;
-    public int count;
-    public JPEnemyDirector aiDirector;
+    [FormerlySerializedAs("type")] public GameObject Type;
+    [FormerlySerializedAs("count")] public int Count;
+    [FormerlySerializedAs("aiDirector")] public JPEnemyDirector AIDirector;
+    [Range(-1,1)] public int ForceSpawnSide;
+    public int MaxOnField = int.MaxValue;
+    public float InternalCooldown;
+    [NonSerialized] public float cooldownTimer;
+    [NonSerialized] public List<JPCharacter> spawnedGuys = new();
 }
 
 public class JPEnemyEncounter : MonoBehaviour
@@ -42,19 +49,30 @@ public class JPEnemyEncounter : MonoBehaviour
             if (dist > ActivationRange)
                 return;
 
-            activated = true;
-            playerCamera.Target = transform;
+            ForceTriggerEncounter();
         }
         else
         {
-            spawnedEnemies.RemoveAll(e => e.dead);
             enemySpawnCooldownTimer -= Time.deltaTime;
-            if (spawnedEnemies.Count < MaxEnemyCount && EnemyPool.Count > 0 && enemySpawnCooldownTimer <= 0)
+            spawnedEnemies.RemoveAll(e => !e || e.dead);
+
+            foreach (JPEnemyPoolEntry jpEnemyPoolEntry in EnemyPool)
             {
+                jpEnemyPoolEntry.spawnedGuys.RemoveAll(e => !e || e.dead);
+                jpEnemyPoolEntry.cooldownTimer -= Time.deltaTime;
+            }
+            
+            var canSpawn = EnemyPool.Where(t =>
+                t.cooldownTimer <= 0 && t.spawnedGuys.Count < t.MaxOnField).ToArray();
+            
+            
+            if (canSpawn.Length > 0 && spawnedEnemies.Count < MaxEnemyCount && EnemyPool.Count > 0 && enemySpawnCooldownTimer <= 0)
+            {
+                
                 enemySpawnCooldownTimer = EnemySpawnCooldown;
-                int randID = Random.Range(0, EnemyPool.Count);
-                JPEnemyPoolEntry entry = EnemyPool[randID];
-                GameObject enemyObj = Instantiate(entry.type, transform, true);
+                int randID = Random.Range(0, canSpawn.Length);
+                JPEnemyPoolEntry entry = canSpawn[randID];
+                GameObject enemyObj = Instantiate(entry.Type, transform, true);
                 
                 
 
@@ -62,10 +80,19 @@ public class JPEnemyEncounter : MonoBehaviour
                 // ReSharper disable once Unity.PerformanceCriticalCodeInvocation
                 var character = enemyObj.GetComponent<JPCharacter>();
                 spawnedEnemies.Add(character);
-                entry.aiDirector.AddManagedEnemy(character);
+                entry.spawnedGuys.Add(character);
+                entry.AIDirector.AddManagedEnemy(character);
+
+                bool spawnRight = entry.ForceSpawnSide switch
+                {
+                    -1 => false,
+                    0 => Random.value < 0.5f,
+                    1 => true,
+                    _ => throw new ArgumentOutOfRangeException()
+                };
                 
                 enemyObj.transform.position = new Vector3(
-                    Random.value < 0.5f ? playerCamera.GetBounds().xMin - 3f : playerCamera.GetBounds().xMax + 3f,
+                    spawnRight ? playerCamera.GetBounds().xMax + 3f : playerCamera.GetBounds().xMin - 3f ,
                     player.transform.position.y + 1, 
                     Random.Range(
                         JPPlayfieldZSide.bottomSide.projectedCollider.rect.GetMax().z,
@@ -73,16 +100,29 @@ public class JPEnemyEncounter : MonoBehaviour
                 );
                 
 
-                entry.count--;
-                if (entry.count <= 0)
-                    EnemyPool.RemoveAt(randID);
+                entry.Count--;
+                if (entry.Count <= 0)
+                    EnemyPool.Remove(entry);
             }
 
             if (spawnedEnemies.Count == 0 && EnemyPool.Count == 0)
             {
                 playerCamera.SetTarget(player);
-                this.enabled = false;
+                FindAnyObjectByType<JPGoSprite>().Go();
+                enabled = false;
             }
+        }
+    }
+
+    public void ForceTriggerEncounter()
+    {
+        activated = true;
+        if(playerCamera.Target && playerCamera.Target.parent.TryGetComponent(out JPCharacter character))
+            playerCamera.Target = transform;
+
+        foreach (JPEnemyPoolEntry entry in EnemyPool)
+        {
+            entry.cooldownTimer = entry.InternalCooldown;
         }
     }
 

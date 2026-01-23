@@ -87,6 +87,7 @@ GameObject:
   - component: {fileID: 4965345423205669295}
   - component: {fileID: 1483299557442282645}
   - component: {fileID: 4008946346164179020}
+  - component: {fileID: 6174347877751570328}
   m_Layer: 5
   m_Name: PlayerView
   m_TagString: Untagged
@@ -179,6 +180,18 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &6174347877751570328
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5070930928240291382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c0b1914486248179c50a24926ad80d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::JPPlayerView
 --- !u!1 &6011065913522103472
 GameObject:
   m_ObjectHideFlags: 0
@@ -324,14 +337,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.2830189, g: 0.2830189, b: 0.2830189, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 581dad36471ec7e4481b616cf6852cfe, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b5ba9a4f3c3270d428bf231d0a66ad60, type: 3}
   m_Type: 2
   m_PreserveAspect: 0
   m_FillCenter: 1

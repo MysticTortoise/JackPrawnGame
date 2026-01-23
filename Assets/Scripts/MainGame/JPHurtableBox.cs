@@ -1,9 +1,9 @@
 ﻿public abstract class JPHurtableBox : JPProjectedCollider
 {
-    protected void Start()
+    protected virtual void Start()
     {
         CollisionType = JPCollisionType.Hurtbox;
     }
 
-    public abstract void Hit(JPCharacter source, JPCharacterAttack attack);
+    public abstract bool Hit(JPCharacter source, JPCharacterAttack attack);
 }

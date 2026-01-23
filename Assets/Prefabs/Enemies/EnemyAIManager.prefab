@@ -45,8 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JPEnemyDirector
   ToSendIn: 2
-  ToFlank: 1
   SeeRange: 204.3
   ApproachDist: 1.6
   StandbyDist: 8
-  GoAroundDist: 6
+  GoAroundDist: 8

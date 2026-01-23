@@ -18,7 +18,7 @@ public class JPEnemyPuppeteer
     public JPCharacter target;
     public float seeRange;
 
-    private readonly float inRangeDist = 0.25f;
+    protected readonly float inRangeDist = 0.25f;
     
     public float approachDist;
     public bool approachRight;
@@ -154,7 +154,7 @@ public class JPEnemyPuppeteer
         FindNewTargets();
     }
 
-    public void Direct()
+    public virtual void Direct()
     {
         // Determine target
         /*if (target is not null && (enemy.transform.position - target.transform.position).magnitude > seeRange)
@@ -188,7 +188,6 @@ public class JPEnemyDirector : MonoBehaviour
     protected HashSet<JPEnemyPuppeteer> puppeteers = new();
 
     [SerializeField] protected uint ToSendIn;
-    [SerializeField] protected uint ToFlank;
     [SerializeField] protected float SeeRange;
     [SerializeField] protected float ApproachDist;
     [SerializeField] protected float StandbyDist;
@@ -209,13 +208,16 @@ public class JPEnemyDirector : MonoBehaviour
 
         foreach (JPCharacter enemy in managing.Where(enemy => !puppeteering.Contains(enemy)))
         {
-            var puppeteer = new JPEnemyPuppeteer(enemy, player)
-            {
-                approachDist = ApproachDist,
-                seeRange = SeeRange,
-                standbyDist = StandbyDist,
-                goAroundDist = GoAroundDist
-            };
+            JPEnemyPuppeteer puppeteer;
+            if (enemy is JPCustomAICharacter customAIChar)
+                puppeteer = customAIChar.CreatePuppeteerFrom(player);
+            else 
+                puppeteer = new JPEnemyPuppeteer(enemy, player);
+
+            puppeteer.approachDist = ApproachDist;
+            puppeteer.seeRange = SeeRange;
+            puppeteer.standbyDist = StandbyDist;
+            puppeteer.goAroundDist = GoAroundDist;
             puppeteers.Add(puppeteer);
             
         }
@@ -229,14 +231,85 @@ public class JPEnemyDirector : MonoBehaviour
         CheckForNewPuppets();
 
         var approachers = puppeteers.Where(p => p.directive == JPEnemyPuppeteerDirective.Approach).ToArray();
-        int righties = approachers.Count(p => p.approachRight);
-        int lefties = approachers.Count(p => !p.approachRight);
+        var righties = approachers.Where(p => p.approachRight).ToList();
+        var lefties = approachers.Where(p => !p.approachRight).ToList();
 
         
         // shit hack 
         var capableEnemies =
-            puppeteers.Where(p => p.directive == JPEnemyPuppeteerDirective.Standby && p.enemy.CombatCapable());
+            puppeteers.Where(p => p.enemy.CombatCapable()).ToArray();
 
+        //uint failsafe = 0;
+        
+        // bad bad bad code, very inefficient, bad bad bad
+        while (lefties.Count + righties.Count < ToSendIn && lefties.Count + righties.Count < puppeteers.Count)
+        {
+            approachers = puppeteers.Where(p => p.directive == JPEnemyPuppeteerDirective.Approach).ToArray();
+            righties = approachers.Where(p => p.approachRight).ToList();
+            lefties = approachers.Where(p => !p.approachRight).ToList();
+            
+            var capableOnLeft = capableEnemies
+                .Where(p => p.enemy.transform.position.x < p.target.transform.position.x)
+                .OrderBy(p => p.enemy.transform.position.x)
+                .ToList();
+            var capableOnRight = capableEnemies
+                .Where(p => p.enemy.transform.position.x >= p.target.transform.position.x)
+                .OrderBy(p => -p.enemy.transform.position.x)
+                .ToList();
+
+            var availableOnLeft = capableOnLeft
+                .Where(p => p.directive != JPEnemyPuppeteerDirective.Approach);
+            
+            var availableOnRight = capableOnRight
+                .Where(p => p.directive != JPEnemyPuppeteerDirective.Approach);
+            
+            if (lefties.Count == 0 && capableOnLeft.Count(p => !lefties.Contains(p)) > 0)
+            {
+                var reassign = capableOnLeft.First(p => !lefties.Contains(p));
+                reassign.directive = JPEnemyPuppeteerDirective.Approach;
+                reassign.approachRight = false;
+
+                if (righties.Contains(reassign))
+                    righties.Remove(reassign);
+                
+                continue;
+            }
+            
+            if (righties.Count == 0 && capableOnRight.Count(p => !righties.Contains(p)) > 0)
+            {
+                var reassign = capableOnRight.First(p => !righties.Contains(p));
+                reassign.directive = JPEnemyPuppeteerDirective.Approach;
+                reassign.approachRight = true;
+
+                if (lefties.Contains(reassign))
+                    lefties.Remove(reassign);
+                
+                continue;
+            }
+
+            if (righties.Count > lefties.Count && availableOnLeft.Any())
+            {
+                var reassign = availableOnLeft.First();
+                reassign.directive = JPEnemyPuppeteerDirective.Approach;
+                reassign.approachRight = false;
+                continue;
+            }
+            
+            if(availableOnRight.Any())
+            {
+                var reassign = availableOnRight.First();
+                reassign.directive = JPEnemyPuppeteerDirective.Approach;
+                reassign.approachRight = true;
+                continue;
+            }
+
+            // out of options
+            break;
+
+
+        }
+        
+        /*
         var jpEnemyPuppeteers = capableEnemies as JPEnemyPuppeteer[] ?? capableEnemies.ToArray();
         if (righties == 0 && lefties == 0 && jpEnemyPuppeteers.Any())
         {
@@ -245,6 +318,9 @@ public class JPEnemyDirector : MonoBehaviour
             goGetEm.approachRight = goGetEm.enemy.transform.position.x > goGetEm.target.transform.position.x;
             return;
         }
+
+
+
 
         if (righties > lefties)
         {
@@ -337,7 +413,7 @@ public class JPEnemyDirector : MonoBehaviour
                         break;
                 }
             }
-        }
+        }*/
 
         puppeteers.RemoveWhere(p => !p.enemy);
         

@@ -6,8 +6,9 @@ public class JPParallaxFloor : MonoBehaviour
     private static readonly int Scale = Shader.PropertyToID("_Scale");
     private SpriteRenderer spriteRenderer;
 
-    [SerializeField] private float scale;
-
+    [SerializeField] private float scale; 
+    public bool primary = true;
+    
     public float zTop;
     public float zBottom;
     public float zSlope;

@@ -13,7 +13,7 @@ public class JPSpriteProjected : MonoBehaviour
 
     private void LookForCamera()
     {
-        mainFloor = FindObjectsByType<JPParallaxFloor>(FindObjectsSortMode.None).First();
+        mainFloor = FindObjectsByType<JPParallaxFloor>(FindObjectsSortMode.None).First(p => p.primary);
     }
 
     private void Start()

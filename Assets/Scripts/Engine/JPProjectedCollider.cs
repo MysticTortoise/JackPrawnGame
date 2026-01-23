@@ -220,7 +220,7 @@ public class JPProjectedCollider : MonoBehaviour
         Vector2 projectedScale = JPProjection.projectPoint(Extents * 2);
         
         
-        Gizmos.DrawWireCube(JPProjection.projectPoint(GetCenter(), FindAnyObjectByType<JPParallaxFloor>()), projectedScale);
+        Gizmos.DrawWireCube(JPProjection.projectPoint(GetCenter(), FindObjectsByType<JPParallaxFloor>(FindObjectsSortMode.None).First(p => p.primary)), projectedScale);
     }
 
     private void OnDrawGizmos()

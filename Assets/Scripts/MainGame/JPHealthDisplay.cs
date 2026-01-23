@@ -10,8 +10,10 @@ public class JPHealthDisplay : MonoBehaviour
     
     private void Update()
     {
-        transform.localScale = Target ? 
-            new Vector3((float)Target.CurrentHealth / Target.MaxHealth * 100f, 1, 1) : 
-            Vector3.zero;
+        float curX = transform.localScale.x;
+        float targX = Target ? (float)Target.currentHealth / Target.MaxHealth * 100f : 0;
+        
+        transform.localScale = 
+            new Vector3(JPMath.Damp(curX, targX, 2, Time.deltaTime), 1, 1);
     }
 }

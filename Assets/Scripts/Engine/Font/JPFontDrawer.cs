@@ -10,12 +10,14 @@ public class JPFontDrawer : MonoBehaviour
 
     [SerializeField] private string StartingMessage;
     [SerializeField] private int StartingCharactersPerLine;
+    [SerializeField] private float LineAddedSpacing = 1;
     [FormerlySerializedAs("zOrder")] public int ZOrder;
     
     private string message;
     private int showCharCount = int.MaxValue;
     private int charactersPerLine;
     private List<SpriteRenderer> characters = new();
+    
 
     private void UpdateShownChars()
     {
@@ -27,6 +29,9 @@ public class JPFontDrawer : MonoBehaviour
     
     private void RedrawMessage()
     {
+        if(charactersPerLine == 0)
+            charactersPerLine = StartingCharactersPerLine;
+        
         while (characters.Count < message.Length)
         {
             var charObj = new GameObject();
@@ -35,7 +40,7 @@ public class JPFontDrawer : MonoBehaviour
             charObj.transform.localPosition = new Vector3(
                 (characters.Count % charactersPerLine) * Font.Spacing,
                 // ReSharper disable once PossibleLossOfFraction
-                (characters.Count / charactersPerLine) * -Font.Spacing,
+                (characters.Count / charactersPerLine) * -Font.Spacing * LineAddedSpacing,
                 0
             );
             
@@ -69,6 +74,8 @@ public class JPFontDrawer : MonoBehaviour
             newCharCount = int.MaxValue;
 
         showCharCount = newCharCount;
+        if (message == null) return;
+        
         RedrawMessage();
     }
 
@@ -77,7 +84,8 @@ public class JPFontDrawer : MonoBehaviour
         if (StartingCharactersPerLine == -1)
             StartingCharactersPerLine = int.MaxValue;
         charactersPerLine = StartingCharactersPerLine;
-        SetMessage(StartingMessage);
+        if(StartingMessage.Length > 0)
+            SetMessage(StartingMessage);
     }
 
     private void OnDrawGizmos()

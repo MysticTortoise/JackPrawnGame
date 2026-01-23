@@ -6,9 +6,11 @@ using UnityEngine.Serialization;
 
 public class JPPlayer : JPCharacter
 {
-    private static readonly int DoJab = Animator.StringToHash("DoJab");
-    private static readonly int JabNum = Animator.StringToHash("JabNum");
-    private static readonly int DoUpper = Animator.StringToHash("DoUpper");
+    private static readonly int DoJabAnimID = Animator.StringToHash("DoJab");
+    private static readonly int JabNumAnimID = Animator.StringToHash("JabNum");
+    private static readonly int DoUpperAnimID = Animator.StringToHash("DoUpper");
+    private static readonly int ChargingPunchAnimID = Animator.StringToHash("ChargingPunch");
+    private static readonly int ChargingTimeAnimID = Animator.StringToHash("ChargingTime");
 
 
     private int jabCount;
@@ -18,8 +20,16 @@ public class JPPlayer : JPCharacter
     [SerializeField] private float UppercutForwardDir;
     [SerializeField] private JPCharacterAttack[] JabAttacks;
     [SerializeField] private JPCharacterAttack UppercutAttack;
+    [SerializeField] private JPCharacterAttack ChargedPunchAttack;
+    [SerializeField] private JPCharacterAttack FullyChargedPunchAttack;
+
+    [SerializeField] private float PunchChargeTime;
+    [SerializeField] private float FullChargePunchTime;
     
     private JPProjectedCollider jabHitbox;
+
+    private float chargeTime;
+    private bool holdingAttack;
 
     public override bool CanMove()
     {
@@ -66,6 +76,20 @@ public class JPPlayer : JPCharacter
                 }
             }
         }
+
+        if (holdingAttack && attackState is JPPlayerAttackState.Idle or JPPlayerAttackState.ChargeAttack)
+        {
+            attackState = JPPlayerAttackState.ChargeAttack;
+            chargeTime += Time.deltaTime;
+            animator.SetBool(ChargingPunchAnimID, true);
+        }
+        else
+        {
+            if (attackState == JPPlayerAttackState.ChargeAttack)
+                attackState = JPPlayerAttackState.Idle;
+            animator.SetBool(ChargingPunchAnimID, false);
+        }
+        animator.SetFloat(ChargingTimeAnimID, Mathf.Clamp(chargeTime / FullChargePunchTime, .1f, 1f));
     }
     
     
@@ -82,9 +106,10 @@ public class JPPlayer : JPCharacter
             2 => JPPlayerAttackState.Jab3,
             _ => attackState
         };
+        
         jabCount++;
-        animator.SetTrigger(DoJab);
-        animator.SetInteger(JabNum, jabCount);
+        animator.SetTrigger(DoJabAnimID);
+        animator.SetInteger(JabNumAnimID, jabCount);
     }
 
     public void DoJabHitbox()
@@ -111,7 +136,7 @@ public class JPPlayer : JPCharacter
     private void Uppercut()
     {
         jabCount = 0;
-        animator.SetTrigger(DoUpper);
+        animator.SetTrigger(DoUpperAnimID);
         attackState = JPPlayerAttackState.UppercutCharge;
     }
 
@@ -127,18 +152,38 @@ public class JPPlayer : JPCharacter
     {
         attackState = JPPlayerAttackState.Idle;
     }
+
+    public void ChargeAttack()
+    {
+        if (chargeTime < PunchChargeTime)
+            return;
+
+        JPCharacterAttack attack = chargeTime >= FullChargePunchTime ? FullyChargedPunchAttack : ChargedPunchAttack;
+        
+        foreach (JPProjectedCollider hurtbox in jabHitbox.CheckCollision(JPCollisionType.Hurtbox))
+        {
+            if(hurtbox is JPHurtableBox hurtableBox)
+                hurtableBox.Hit(this, attack);
+        }
+    }
+
+    public void FinishChargeAttack()
+    {
+        attackState = JPPlayerAttackState.Idle;
+    }
     
     public override void BeginAttack()
     {
         if (!CanAttack())
             return;
 
-        if (moveInput == Vector2.up)
+        if (moveInput.y > moveInput.x && moveInput.y > 0)
         {
             Uppercut();
             return;
         }
-        
+        holdingAttack = true;
+        chargeTime = 0;
         
         // Jabs
         if (jabCount == 0)
@@ -147,18 +192,19 @@ public class JPPlayer : JPCharacter
             queuedJab = true;
     }
 
+    public override void ReleaseAttack()
+    {
+        holdingAttack = false;
+        
+        if (!CanAttack())
+            return;
+    }
+
     public override bool HitBy(JPCharacter source, JPCharacterAttack attack)
     {
         if (!base.HitBy(source, attack)) return false;
         attackState = JPPlayerAttackState.Idle;
         jabCount = 0;
         return true;
-    }
-
-
-    protected new void OnDrawGizmosSelected()
-    {
-        base.OnDrawGizmosSelected();
-        Gizmos.color = Color.darkRed;
     }
 }

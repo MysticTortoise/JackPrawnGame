@@ -91,6 +91,30 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: f53cc8ee-2b71-48e1-8477-e4fe86fa5660
     m_ActionName: 'MainGame/Attack[/Keyboard/space]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: a90016e2-e6d4-4853-96e2-05635000ad11
+    m_ActionName: 'MainUI/GO![/Keyboard/anyKey]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2571647437754831819}
+        m_TargetAssemblyTypeName: JPPlayerController, Assembly-CSharp
+        m_MethodName: BeDone
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 0ecc8e3f-7692-4f3d-a362-bc18d5700712
+    m_ActionName: 'MainGame/Skip[/Keyboard/enter,/Keyboard/1]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: dfd4a77e-7092-4946-98a4-ef007e0eaf36
+    m_ActionName: 'MainUI/SkipCutscene[/Keyboard/enter]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: MainGame
@@ -227,7 +251,7 @@ Transform:
   m_GameObject: {fileID: 1008785421491054800}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -10.682381, y: -8.28, z: 16.56}
+  m_LocalPosition: {x: -14.502836, y: -8.28, z: 16.56}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -388,8 +412,7 @@ MonoBehaviour:
   FlinchMoveRecoverSpeed: 0.2
   DeathForce: 20
   Faction: 0
-  MaxHealth: 20
-  CurrentHealth: 0
+  MaxHealth: 60
   UppercutForce: 40
   UppercutForwardDir: 6
   JabAttacks:
@@ -397,19 +420,43 @@ MonoBehaviour:
     DamageSeverity: 1
     EffectStrength: 0.4
     AttackEffect: {fileID: 1266180631865872503, guid: 209df5de56d161a4eb2d9bc1efc37abc, type: 3}
+    ImpactTime: 0.2
+    HitSound: {fileID: 8300000, guid: 9124bf641f3d6a34bad1392764eb6382, type: 3}
   - Damage: 2
     DamageSeverity: 2
     EffectStrength: 2
     AttackEffect: {fileID: 8256192449762074763, guid: aee0a9763962f6b4fae5b54039b17fc1, type: 3}
+    ImpactTime: 0.2
+    HitSound: {fileID: 8300000, guid: 9124bf641f3d6a34bad1392764eb6382, type: 3}
   - Damage: 5
     DamageSeverity: 3
     EffectStrength: 40
     AttackEffect: {fileID: 8256192449762074763, guid: f7756c03bf7affe41afaab4012dfd5dd, type: 3}
+    ImpactTime: 0.5
+    HitSound: {fileID: 8300000, guid: 6651e3e76bf8aaa4289eb9937a2d6ec9, type: 3}
   UppercutAttack:
     Damage: 3
     DamageSeverity: 3
     EffectStrength: 50
     AttackEffect: {fileID: 5326211154736615938, guid: a4951e7392736684d91ba5aac6dc6469, type: 3}
+    ImpactTime: 0.2
+    HitSound: {fileID: 8300000, guid: 6651e3e76bf8aaa4289eb9937a2d6ec9, type: 3}
+  ChargedPunchAttack:
+    Damage: 7
+    DamageSeverity: 3
+    EffectStrength: 60
+    AttackEffect: {fileID: 8256192449762074763, guid: f5f38cdea8e3c9046b12c7fb2d6660b8, type: 3}
+    ImpactTime: 0.5
+    HitSound: {fileID: 8300000, guid: 6651e3e76bf8aaa4289eb9937a2d6ec9, type: 3}
+  FullyChargedPunchAttack:
+    Damage: 12
+    DamageSeverity: 3
+    EffectStrength: 80
+    AttackEffect: {fileID: 8256192449762074763, guid: f7756c03bf7affe41afaab4012dfd5dd, type: 3}
+    ImpactTime: 0
+    HitSound: {fileID: 8300000, guid: 6651e3e76bf8aaa4289eb9937a2d6ec9, type: 3}
+  PunchChargeTime: 1
+  FullChargePunchTime: 1
 --- !u!114 &7608977312290902217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -725,6 +772,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JPShadowCaster
   BaseCollider: {fileID: 344593227208470719}
+  Offset: {x: 0, y: 0}
 --- !u!1 &4903156142959761386
 GameObject:
   m_ObjectHideFlags: 0

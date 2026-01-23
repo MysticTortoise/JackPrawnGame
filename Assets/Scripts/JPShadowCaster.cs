@@ -11,7 +11,7 @@ public class JPShadowCaster : MonoBehaviour
 
     private void Start()
     {
-        mainFloor = FindObjectsByType<JPParallaxFloor>(FindObjectsSortMode.None).First();
+        mainFloor = FindObjectsByType<JPParallaxFloor>(FindObjectsSortMode.None).First(p => p.primary);
     }
     
 

@@ -5,7 +5,7 @@ using UnityEngine.Serialization;
 public class JPScrollingBG : MonoBehaviour
 {
     private static readonly int Amount = Shader.PropertyToID("_Amount");
-    private static readonly int MainTex = Shader.PropertyToID("_Tex1");
+    private static readonly int MainTex = Shader.PropertyToID("_MainTex");
     private static readonly int MainTex2 = Shader.PropertyToID("_Tex2");
     
     private SpriteRenderer spriteRenderer;

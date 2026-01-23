@@ -40,10 +40,11 @@ public class JPCharacter : MonoBehaviour
     [NonSerialized] public Vector2 moveInput;
     protected JPCharacterDamageState damageState = JPCharacterDamageState.None;
     [FormerlySerializedAs("Health")] public int MaxHealth;
-    [DoNotSerialize] public int CurrentHealth;
+    [NonSerialized] public int currentHealth;
     
     [NonSerialized] public Vector3 flinchMove = Vector3.zero;
     protected float flinchTimer;
+    protected float impactTime;
     
     protected float yVel;
     protected bool grounded;
@@ -106,7 +107,7 @@ public class JPCharacter : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected void Start()
     {
-        CurrentHealth = MaxHealth;
+        currentHealth = MaxHealth;
         SetupComponents();
     }
 
@@ -133,7 +134,8 @@ public class JPCharacter : MonoBehaviour
                 moveInput.x * MoveSpeed.x, 0, moveInput.y * MoveSpeed.y);
         }
 
-        velocity += flinchMove;
+        if(impactTime <= 0)
+            velocity += flinchMove;
 
         // Gravity
         if (grounded && yVel <= 0)
@@ -180,6 +182,9 @@ public class JPCharacter : MonoBehaviour
     // Update is called once per frame
     protected virtual void Update()
     {
+        impactTime = Mathf.Max(impactTime - Time.deltaTime, 0);
+        
+        
         // Apply velocity
         footCollider.MoveCollider(SolveVelocity() * Time.deltaTime);
         
@@ -189,20 +194,22 @@ public class JPCharacter : MonoBehaviour
             .Count(solidCollider => solidCollider != footCollider) > 0 && yVel <= 0;
         
         // Flinch Time
-        flinchTimer -= Time.deltaTime;
-        if (flinchTimer <= 0)
+        if (impactTime <= 0)
         {
-            flinchMove = Vector3.zero;
-            flinchTimer = 0;
-            damageState = JPCharacterDamageState.None;
-        }
-
-        if (grounded)
-        {
-            flinchMove -= new Vector3(
-                Mathf.Clamp(flinchMove.x, -FlinchMoveRecoverSpeed, FlinchMoveRecoverSpeed), 
-                Mathf.Clamp(flinchMove.y, -FlinchMoveRecoverSpeed, FlinchMoveRecoverSpeed), 
-                Mathf.Clamp(flinchMove.z, -FlinchMoveRecoverSpeed, FlinchMoveRecoverSpeed));
+            flinchTimer -= Time.deltaTime;
+            if (flinchTimer <= 0)
+            {
+                flinchMove = Vector3.zero;
+                flinchTimer = 0;
+                damageState = JPCharacterDamageState.None;
+            }
+            if (grounded)
+            {
+                flinchMove -= new Vector3(
+                    Mathf.Clamp(flinchMove.x, -FlinchMoveRecoverSpeed, FlinchMoveRecoverSpeed), 
+                    Mathf.Clamp(flinchMove.y, -FlinchMoveRecoverSpeed, FlinchMoveRecoverSpeed), 
+                    Mathf.Clamp(flinchMove.z, -FlinchMoveRecoverSpeed, FlinchMoveRecoverSpeed));
+            }
         }
         
         UpdateAnims();
@@ -244,8 +251,8 @@ public class JPCharacter : MonoBehaviour
         if (!CanBeHit())
             return false;
         
-        CurrentHealth -= attack.Damage;
-        if(CurrentHealth <= 0)
+        currentHealth -= attack.Damage;
+        if(currentHealth <= 0)
             Die();
 
         SetFacingDir(transform.position.x - source.transform.position.x < 0);
@@ -254,6 +261,11 @@ public class JPCharacter : MonoBehaviour
         {
             GameObject fxObj = Instantiate(attack.AttackEffect);
             fxObj.transform.position = fxSource.position;
+        }
+
+        if (attack.HitSound)
+        {
+            JPQuickSound.PlayQuickSound(attack.HitSound);
         }
         
         if (attack.DamageSeverity < damageState)
@@ -269,6 +281,7 @@ public class JPCharacter : MonoBehaviour
         }
         
         damageState = attack.DamageSeverity;
+        impactTime = attack.ImpactTime;
 
         float sign = Mathf.Sign(transform.position.x - source.transform.position.x);
 

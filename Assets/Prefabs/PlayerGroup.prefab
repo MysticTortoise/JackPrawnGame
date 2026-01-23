@@ -93,10 +93,6 @@ PrefabInstance:
       propertyPath: Target
       value: 
       objectReference: {fileID: 8911240214659906086}
-    - target: {fileID: 3931395422515856278, guid: 92166e2c9ba487d46bdd6f08960c8116, type: 3}
-      propertyPath: StartingMessage
-      value: < LIFE >            < BOSS >
-      objectReference: {fileID: 0}
     - target: {fileID: 4726699763236144173, guid: 92166e2c9ba487d46bdd6f08960c8116, type: 3}
       propertyPath: m_Size.x
       value: 7.7
@@ -113,6 +109,10 @@ PrefabInstance:
       propertyPath: Target
       value: 
       objectReference: {fileID: 2237665936164199124}
+    - target: {fileID: 8829094371350806570, guid: 92166e2c9ba487d46bdd6f08960c8116, type: 3}
+      propertyPath: WriteInterval
+      value: 0.05
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

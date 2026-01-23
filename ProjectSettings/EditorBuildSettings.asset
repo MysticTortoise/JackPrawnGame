@@ -6,8 +6,35 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
+    path: Assets/Scenes/Title.unity
+    guid: 148e0668a2474854893913e6d2ffdf8c
+  - enabled: 1
+    path: Assets/Scenes/IntroCutscene.unity
+    guid: c877a446b47a34a48bb769d825b3e2e2
+  - enabled: 1
+    path: Assets/Scenes/Intermission.unity
+    guid: a1de97e04f694204c8ba57f41524d430
+  - enabled: 1
+    path: Assets/Scenes/Tutorial.unity
+    guid: 9bd45c8a9746c8c4eac905e4d830f20f
+  - enabled: 1
+    path: Assets/Scenes/Boardwalk.unity
+    guid: 32ba6d15b28bb734981f9ed247f543a7
+  - enabled: 1
+    path: Assets/Scenes/City.unity
+    guid: bc5b31daa4cf71444a36282baadf6e81
+  - enabled: 1
+    path: Assets/Scenes/Tower.unity
+    guid: 1b7f6279efd7c7341a054abc00429077
+  - enabled: 1
+    path: Assets/Scenes/Boss.unity
+    guid: b27887cd60c030c47967d8473414ae5c
+  - enabled: 1
+    path: Assets/Scenes/TestScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/Scenes/GameOver.unity
+    guid: dd33e0856d516a345b85257f6680066d
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

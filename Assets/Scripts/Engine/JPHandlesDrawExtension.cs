@@ -2,6 +2,7 @@
 using UnityEngine;
 public  static class JPHandlesDrawExtensions
 {
+    #if UNITY_EDITOR
     static Vector3 cachedCenter;
     static Vector3 cachedSize;
     static Vector3[] cachedVerts = new Vector3[8];
@@ -38,4 +39,5 @@ public  static class JPHandlesDrawExtensions
     {
         Handles.DrawAAConvexPolygon(a, b, c, d);
     }
+    #endif
 }
