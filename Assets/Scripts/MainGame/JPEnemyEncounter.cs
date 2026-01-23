@@ -7,7 +7,7 @@ using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 [Serializable]
-class JPEnemyPoolEntry
+public class JPEnemyPoolEntry
 {
     [FormerlySerializedAs("type")] public GameObject Type;
     [FormerlySerializedAs("count")] public int Count;
@@ -24,11 +24,12 @@ public class JPEnemyEncounter : MonoBehaviour
     [SerializeField] private float ActivationRange;
     [SerializeField] private int MaxEnemyCount;
     [SerializeField] private float EnemySpawnCooldown;
+    [SerializeField] private float MaxSpawnBounds = 999f;
 
     private JPCharacter player;
     private JPFollowCamera playerCamera;
 
-    [SerializeField] private List<JPEnemyPoolEntry> EnemyPool = new();
+    [SerializeField] public List<JPEnemyPoolEntry> EnemyPool = new();
     private List<JPCharacter> spawnedEnemies = new();
 
     private bool activated;
@@ -90,9 +91,11 @@ public class JPEnemyEncounter : MonoBehaviour
                     1 => true,
                     _ => throw new ArgumentOutOfRangeException()
                 };
-                
+
+                float rightSpawn = Mathf.Min(playerCamera.GetBounds().xMax + 3f, transform.position.x + MaxSpawnBounds);
+                float leftSpawn = Mathf.Max(playerCamera.GetBounds().xMin - 3f, transform.position.x - MaxSpawnBounds);
                 enemyObj.transform.position = new Vector3(
-                    spawnRight ? playerCamera.GetBounds().xMax + 3f : playerCamera.GetBounds().xMin - 3f ,
+                    spawnRight ? rightSpawn : leftSpawn,
                     player.transform.position.y + 1, 
                     Random.Range(
                         JPPlayfieldZSide.bottomSide.projectedCollider.rect.GetMax().z,
@@ -114,10 +117,10 @@ public class JPEnemyEncounter : MonoBehaviour
         }
     }
 
-    public void ForceTriggerEncounter()
+    public void ForceTriggerEncounter(bool forceCamera = true)
     {
         activated = true;
-        if(playerCamera.Target && playerCamera.Target.parent.TryGetComponent(out JPCharacter character))
+        if(forceCamera && playerCamera.Target && playerCamera.Target.parent.TryGetComponent(out JPCharacter character))
             playerCamera.Target = transform;
 
         foreach (JPEnemyPoolEntry entry in EnemyPool)
@@ -130,5 +133,8 @@ public class JPEnemyEncounter : MonoBehaviour
     {
         Gizmos.color = Color.darkGreen;
         Gizmos.DrawWireCube(transform.position, new Vector3(ActivationRange * 2, 10, 0));
+
+        Gizmos.color = Color.darkRed;
+        Gizmos.DrawWireCube(transform.position, new Vector3(MaxSpawnBounds * 2, 11, 0));
     }
 }

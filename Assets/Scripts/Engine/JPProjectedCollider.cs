@@ -222,8 +222,9 @@ public class JPProjectedCollider : MonoBehaviour
         
         Gizmos.DrawWireCube(JPProjection.projectPoint(GetCenter(), FindObjectsByType<JPParallaxFloor>(FindObjectsSortMode.None).First(p => p.primary)), projectedScale);
     }
+#if UNITY_EDITOR
 
-    private void OnDrawGizmos()
+    protected void OnDrawGizmos()
     {
         Gizmos.color = CollisionType.GetColor();
         
@@ -234,6 +235,7 @@ public class JPProjectedCollider : MonoBehaviour
         
         //Gizmos.DrawWireSphere(JPProjection.projectPoint(GetCenter(), FindAnyObjectByType<JPParallaxFloor>()), 1f);
     }
+    #endif
 
 #endif
 }

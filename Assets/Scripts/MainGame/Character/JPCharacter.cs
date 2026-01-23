@@ -315,7 +315,7 @@ public class JPCharacter : MonoBehaviour
         yVel += DeathForce;
     }
     
-
+/*
     protected void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.lavender;
@@ -324,7 +324,7 @@ public class JPCharacter : MonoBehaviour
 
         JPRect floorCheckRect = GetFloorCheckRect();
         Gizmos.DrawWireCube(floorCheckRect.Position, floorCheckRect.Extents * 2);
-    }
+    }*/
 
     public virtual void DoneDying()
     {

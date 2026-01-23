@@ -1098,7 +1098,7 @@ Transform:
   m_GameObject: {fileID: 7809304003256332835}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -7, y: 1, z: 0}
+  m_LocalPosition: {x: -14.5, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1118,7 +1118,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::JPFontDrawer
   Font: {fileID: 11400000, guid: 81be40614b8ced84db15f7c3169e6351, type: 2}
   StartingMessage: THIS IS A BIG OLD DIALOGUE TEXT THAT I'M MAKING TO TEST DIALOGUE
-  StartingCharactersPerLine: 20
+  StartingCharactersPerLine: 26
   LineAddedSpacing: 1
   ZOrder: 26
 --- !u!114 &8829094371350806570

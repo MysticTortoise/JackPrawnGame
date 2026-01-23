@@ -7,7 +7,7 @@ public class JPClamButton : JPHurtableBox
     private static readonly int Pressed = Animator.StringToHash("Pressed");
     private Animator animator;
     
-    private bool hit;
+    [NonSerialized] public bool hit;
 
     protected override void Start()
     {

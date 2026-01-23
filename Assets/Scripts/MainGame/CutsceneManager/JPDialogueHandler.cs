@@ -1,13 +1,16 @@
 ﻿
 using System;
 using System.Collections;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 [Serializable]
 public class JPDialogueMessage
 {
-    public string message;
+    [FormerlySerializedAs("message")] public string Message;
+    [CanBeNull] public AudioClip SoundClip;
 }
 
 public class JPDialogueHandler : MonoBehaviour
@@ -44,12 +47,17 @@ public class JPDialogueHandler : MonoBehaviour
 
         while (dialogueID < dialogueMessages.Length)
         {
-            int thisMessage = dialogueID;
-            scrollText.SetMessage(dialogueMessages[thisMessage].message);
+            JPDialogueMessage thisMessage = dialogueMessages[dialogueID];
+            int thisMessageID = dialogueID;
+            scrollText.SetMessage(thisMessage.Message);
             canAdvance = false;
+            
+            if(thisMessage.SoundClip)
+                JPQuickSound.PlayQuickSound(thisMessage.SoundClip);
 
-            yield return new WaitUntil(() => dialogueID > thisMessage);
+            yield return new WaitUntil(() => dialogueID > thisMessageID);
         }
+        scrollText.SetMessage("");
 
         dialogueUp = false;
         canAdvance = false;
@@ -58,7 +66,7 @@ public class JPDialogueHandler : MonoBehaviour
 
     public void Advance(InputAction.CallbackContext context)
     {
-        if (!dialogueUp || !canAdvance || !context.started) return;
+        if (!dialogueUp /*|| !canAdvance*/ || !context.started) return;
 
         dialogueID++;
     }

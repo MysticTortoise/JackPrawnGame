@@ -12,6 +12,9 @@ public class RTFadeoutTransition : MonoBehaviour
 
     public static void SceneTransition(string sceneName)
     {
+        if (FindAnyObjectByType<RTFadeoutTransition>())
+            return;
+        
         lastSceneName = SceneManager.GetActiveScene().path;
         lastSceneIndex = SceneManager.GetActiveScene().buildIndex;
         GameObject prefab = Resources.Load("FadeoutTransition") as GameObject;
